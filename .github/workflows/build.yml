@@ -338,9 +338,9 @@ jobs:
     # Test
     - name: Test
       uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          script: ./gradlew connectedDebugCheck --stacktrace -PInstrumentation
+      with:
+        api-level: 31
+        script: ./gradlew connectedDebugCheck --stacktrace -PInstrumentation
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3

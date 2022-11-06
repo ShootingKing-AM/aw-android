@@ -177,6 +177,178 @@ jobs:
         name: aw-android
         path: dist/aw-android*.apk
 
+  test:
+    name: test ${{ matrix.os }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
+    runs-on: ${{ matrix.os }}
+    env:
+      SUPPLY_TRACK: production   # used by fastlane to determine track to publish to
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-latest]
+        java_version: [1.8]
+        node_version: [16]
+        ruby_version: ['3.0']
+        rust_build: [false]   # if true, will build aw-server-rust, otherwise will fetch artifact from recent CI run
+        skip_webui: [true]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+
+    # Build in release mode if: (longer build times)
+    #  - on a tag (release)
+    #  - on the master branch (nightly)
+    - name: Set RELEASE
+      run: |
+        echo "RELEASE=${{ startsWith(github.ref_name, 'v') || github.ref_name == 'master' }}" >> $GITHUB_ENV
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java_version }}
+
+    # Android SDK & NDK
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+    # - name: Install NDK
+    #   run: sdkmanager "ndk;25.0.8775105"
+
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      if: ${{ !matrix.skip_webui }}
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: Set up Rust nightly
+      uses: actions-rs/toolchain@v1
+      if: ${{ matrix.rust_build }}
+      with:
+        profile: minimal
+        toolchain: nightly
+        override: true
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby_version }}
+
+    - uses: adnsio/setup-age-action@v1.2.0
+
+    # Set up caches
+    - name: Get npm cache dir
+      id: npm-cache-dir
+      if: ${{ !matrix.skip_webui }}
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
+    - uses: actions/cache@v1
+      name: Cache npm
+      if: ${{ !matrix.skip_webui }}
+      env:
+        cache-name: node
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.cache-name }}-
+
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      if: ${{ matrix.rust_build }}
+      env:
+        cache-name: cargo-build-target
+      with:
+        path: aw-server-rust/target
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.cache-name }}-
+
+    # Install fastlane
+    - name: Install fastlane
+      run: |
+        gem install bundler
+        bundle install
+
+    # Set up Rust toolchain
+    - name: Set up Rust toolchain for Android NDK
+      run: |
+        ANDROID_NDK_HOME=
+        ./aw-server-rust/install-ndk.sh
+
+    # Build webui
+    - name: Build webui
+      if: ${{ !matrix.skip_webui }}
+      run: |
+        make aw-webui
+
+    # Build or fetch aw-server-rust artifacts
+    - name: Build aw-server-rust
+      if: ${{ matrix.rust_build }}
+      env:
+        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      run: |
+        make aw-server-rust
+
+    - name: Download artifact
+      uses: dawidd6/action-download-artifact@v2
+      if: ${{ !matrix.rust_build }}
+      with:
+        repo: ActivityWatch/aw-server-rust
+        branch: master
+        workflow: build.yml
+        # Optional, uploaded artifact name,
+        # will download all artifacts if not specified
+        # and extract them in respective subdirectories
+        # https://github.com/actions/download-artifact#download-all-artifacts
+        name: binaries-android
+        path: aw-server-rust/target/
+        # Optional, the status or conclusion of a completed workflow to search for
+        # Can be one of a workflow conculsion::
+        # "failure", "success", "neutral", "cancelled", "skipped", "timed_out", "action_required"
+        # Or a workflow status:
+        # "completed", "in_progress", "queued"
+        # Default: "completed"
+        workflow_conclusion: success
+
+    - name: Set version
+      if: startsWith(github.ref, 'refs/tags/v')  # only on runs triggered from tag
+      run: |
+        # Sets versionName, tail used to skip "v" at start of tag name
+        SHORT_VERSION=$(echo "${{ github.ref_name }}" | tail -c +2 -)
+        sed -i "s/versionName \".*\"/versionName \"$SHORT_VERSION\"/g" \
+                mobile/build.gradle
+        bundle exec fastlane update_version
+
+    # - name: Load secrets
+    #   if: env.KEY_ANDROID_JKS != null
+    #   env:
+    #     KEY_ANDROID_JKS: ${{ secrets.KEY_ANDROID_JKS }}
+    #   run: |
+    #     printf "$KEY_ANDROID_JKS" > android.jks.key
+    #     cat android.jks.age | age -d -i android.jks.key -o android.jks
+    #     rm android.jks.key
+
+    # - name: Assemble APK
+    #   env:
+    #     JKS_STOREPASS: ${{ secrets.KEY_ANDROID_JKS_STOREPASS }}
+    #     JKS_KEYPASS: ${{ secrets.KEY_ANDROID_JKS_KEYPASS }}
+    #   run: |
+    #     # TODO: Add related stuff in .travis.yml
+    #     # TODO: Allow building even if secrets not set
+    #     make dist/aw-android.apk
+
+    # Test
+    - name: Test
+      uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          script: ./gradlew connectedDebugCheck --stacktrace -PInstrumentation
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots
+        # mobile\build\outputs\connected_android_test_additional_output\debugAndroidTest\connected\Pixel_XL_API_32(AVD) - 12\ScreenshotTest_saveDeviceScreenBitmap.png
+        path: mobile/build/outputs/connected_android_test_additional_output/* dist/aw-android*.apk
+
   release-fastlane:
     needs: [build]
     if: startsWith(github.ref, 'refs/tags/v')  # only on runs triggered from tag

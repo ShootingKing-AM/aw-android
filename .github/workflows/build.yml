@@ -208,7 +208,7 @@ jobs:
     #   with:
     #     java-version: ${{ matrix.java_version }}
 
-    Android SDK & NDK
+    # Android SDK & NDK
     - name: Set up Android SDK
       uses: android-actions/setup-android@v2
     - name: Install NDK

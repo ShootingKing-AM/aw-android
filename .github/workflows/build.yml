@@ -203,14 +203,14 @@ jobs:
       run: |
         echo "RELEASE=${{ startsWith(github.ref_name, 'v') || github.ref_name == 'master' }}" >> $GITHUB_ENV
 
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java_version }}
+    # - name: Set up JDK
+    #   uses: actions/setup-java@v1
+    #   with:
+    #     java-version: ${{ matrix.java_version }}
 
     # Android SDK & NDK
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v2
+    # - name: Set up Android SDK
+    #   uses: android-actions/setup-android@v2
     # - name: Install NDK
     #   run: sdkmanager "ndk;25.0.8775105"
 
@@ -269,6 +269,7 @@ jobs:
 
     # Set up Rust toolchain
     - name: Set up Rust toolchain for Android NDK
+      if: ${{ matrix.rust_build }}
       run: |
         ANDROID_NDK_HOME=
         ./aw-server-rust/install-ndk.sh

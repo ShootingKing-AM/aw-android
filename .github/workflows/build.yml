@@ -187,7 +187,7 @@ jobs:
       matrix:
         os: [macOS-latest]
         android_emu_version: [29]
-        java_version: [1.8]
+        java_version: [11]
         node_version: [16]
         ruby_version: ['3.0']
         rust_build: [false]   # if true, will build aw-server-rust, otherwise will fetch artifact from recent CI run
@@ -204,10 +204,10 @@ jobs:
       run: |
         echo "RELEASE=${{ startsWith(github.ref_name, 'v') || github.ref_name == 'master' }}" >> $GITHUB_ENV
 
-    # - name: Set up JDK
-    #   uses: actions/setup-java@v1
-    #   with:
-    #     java-version: ${{ matrix.java_version }}
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java_version }}
 
     # Android SDK & NDK
     - name: Set up Android SDK

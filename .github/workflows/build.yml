@@ -186,7 +186,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macOS-latest]
-        android_emu_version: [29]
+        android_emu_version: [27, 29, 31, 32]
         java_version: [11]
         node_version: [16]
         ruby_version: ['3.0']
@@ -356,7 +356,19 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ matrix.android_emu_version }}
-        emulator-options: -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+        arch: x86_64
+        profile: Nexus 6
+        target: google_apis
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+    - name: Test
+      id: test
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.android_emu_version }}
+        arch: x86_64
+        profile: Nexus 6
+        target: google_apis
+        emulator-options: -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save
         # Only running specific Instrumentation tests cause others are failing right now. TODO: Fix others
         script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
 

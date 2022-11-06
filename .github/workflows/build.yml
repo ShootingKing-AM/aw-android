@@ -154,7 +154,7 @@ jobs:
         bundle exec fastlane update_version
 
     - name: Load secrets
-      if: ${{ secrets.KEY_ANDROID_JKS }}
+      if: secrets.KEY_ANDROID_JKS
       env:
         KEY_ANDROID_JKS: ${{ secrets.KEY_ANDROID_JKS }}
       run: |

@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04]
-        java_version: [1.8]
+        java_version: [11]
         node_version: [16]
         ruby_version: ['3.0']
         rust_build: [false]   # if true, will build aw-server-rust, otherwise will fetch artifact from recent CI run

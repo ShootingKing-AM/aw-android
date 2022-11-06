@@ -356,6 +356,7 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ matrix.android_emu_version }}
+        emulator-options: -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
         # Only running specific Instrumentation tests cause others are failing right now. TODO: Fix others
         script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
 

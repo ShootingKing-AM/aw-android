@@ -357,7 +357,7 @@ jobs:
       with:
         api-level: ${{ matrix.android_emu_version }}
         # Only running specific Instrumentation tests cause others are failing right now. TODO: Fix others
-        script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ExampleInstrumentedTest --stacktrace
+        script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
 
     - name: Upload artifact
       if: ${{ success() || steps.test.conclusion == 'failure'}}
@@ -365,7 +365,7 @@ jobs:
       with:
         name: screenshots
         # mobile\build\outputs\connected_android_test_additional_output\debugAndroidTest\connected\Pixel_XL_API_32(AVD) - 12\ScreenshotTest_saveDeviceScreenBitmap.png
-        path: mobile/build/outputs/connected_android_test_additional_output/* dist/aw-android*.apk
+        path: mobile/build/outputs/connected_android_test_additional_output/*
 
   release-fastlane:
     needs: [build]

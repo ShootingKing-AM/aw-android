@@ -309,7 +309,10 @@ jobs:
         # "completed", "in_progress", "queued"
         # Default: "completed"
         workflow_conclusion: success
-        # TODO: These are only debug, make something like "make install" for below
+
+    - name: Install aw-server-rust binaries
+      if: ${{ !matrix.rust_build }}
+      # TODO: These are only debug, make something like "make install" for below
       run: | 
         cp -f ./aw-server-rust/target/aarch64-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/arm64-v8a/libaw_server.so
         cp -f ./aw-server-rust/target/armv7-linux-androideabi/debug/libaw_server.so mobile/src/main/jniLibs/armeabi-v7a/libaw_server.so

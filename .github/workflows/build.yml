@@ -314,9 +314,13 @@ jobs:
       if: ${{ !matrix.rust_build }}
       # TODO: These are only debug, make something like "make install" for below
       run: | 
+        mkdir -p mobile/src/main/jniLibs/arm64-v8a/
         cp -f ./aw-server-rust/target/aarch64-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/arm64-v8a/libaw_server.so
+        mkdir -p mobile/src/main/jniLibs/armeabi-v7a/
         cp -f ./aw-server-rust/target/armv7-linux-androideabi/debug/libaw_server.so mobile/src/main/jniLibs/armeabi-v7a/libaw_server.so
+        mkdir -p mobile/src/main/jniLibs/x86/
         cp -f ./aw-server-rust/target/i686-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/x86/libaw_server.so
+        mkdir -p mobile/src/main/jniLibs/x86_64/
         cp -f ./aw-server-rust/target/x86_64-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/x86_64/libaw_server.so
 
     - name: Set version

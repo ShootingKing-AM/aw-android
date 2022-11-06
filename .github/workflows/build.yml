@@ -351,8 +351,7 @@ jobs:
     #     make dist/aw-android.apk
 
     # Test
-    - name: Test
-      id: test
+    - name: Test Cache
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ matrix.android_emu_version }}

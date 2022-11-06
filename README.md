@@ -1,4 +1,4 @@
-aw-android test
+aw-android
 ==========
 
 [![GitHub Actions badge](https://github.com/ActivityWatch/aw-android/workflows/Build/badge.svg)](https://github.com/ActivityWatch/aw-android/actions)

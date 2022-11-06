@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
+    name: Build ${{ matrix.os }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     env:
       SUPPLY_TRACK: production   # used by fastlane to determine track to publish to
@@ -178,7 +178,7 @@ jobs:
         path: dist/aw-android*.apk
 
   test:
-    name: test ${{ matrix.os }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
+    name: Test api-${{ matrix.android_emu_version }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     env:
       SUPPLY_TRACK: production   # used by fastlane to determine track to publish to
@@ -186,6 +186,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macOS-latest]
+        android_emu_version: [29]
         java_version: [1.8]
         node_version: [16]
         ruby_version: ['3.0']
@@ -308,6 +309,12 @@ jobs:
         # "completed", "in_progress", "queued"
         # Default: "completed"
         workflow_conclusion: success
+        # TODO: These are only debug, make something like "make install" for below
+      run: | 
+        cp -f ./aw-server-rust/target/aarch64-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/arm64-v8a/libaw_server.so
+        cp -f ./aw-server-rust/target/armv7-linux-androideabi/debug/libaw_server.so mobile/src/main/jniLibs/armeabi-v7a/libaw_server.so
+        cp -f ./aw-server-rust/target/i686-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/x86/libaw_server.so
+        cp -f ./aw-server-rust/target/x86_64-linux-android/debug/libaw_server.so mobile/src/main/jniLibs/x86_64/libaw_server.so
 
     - name: Set version
       if: startsWith(github.ref, 'refs/tags/v')  # only on runs triggered from tag

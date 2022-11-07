@@ -359,6 +359,7 @@ jobs:
         profile: Nexus 6
         target: google_apis
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+        script: echo Meoooow !
     - name: Test
       id: test
       uses: reactivecircus/android-emulator-runner@v2

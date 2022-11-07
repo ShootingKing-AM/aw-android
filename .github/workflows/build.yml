@@ -247,7 +247,7 @@ jobs:
       run: |
         echo "Starting emulator and waiting for boot to complete...."
         ls -la $ANDROID_HOME/emulator
-        nohup $ANDROID_HOME/tools/emulator -avd $MATRIX_AVD -gpu host -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
+        nohup $ANDROID_HOME/tools/emulator -avd $MATRIX_AVD -gpu host -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 -logcat *:v 2>&1 &
         $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
         echo "Emulator has finished booting"
         $ANDROID_HOME/platform-tools/adb devices
@@ -439,7 +439,7 @@ jobs:
         SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
         brew install ffmpeg
-        $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @$MATRIX_AVD &
+        $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-audio -gpu swiftshader_indirect @$MATRIX_AVD -logcat *:v &
         ffmpeg -f avfoundation -i 0 -t 240 out$SUFFIX.mov &
     - name: Test App
       id: test

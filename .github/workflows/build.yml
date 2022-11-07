@@ -185,7 +185,7 @@ jobs:
       MATRIX_E_SDK: ${{ matrix.android_emu_version }}
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 1
       matrix:
         os: [macos-12] # macOS-latest,
         android_emu_version: [27, 29, 31, 32]

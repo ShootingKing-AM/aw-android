@@ -178,7 +178,7 @@ jobs:
         path: dist/aw-android*.apk
 
   test:
-    name: Test api-${{ matrix.android_emu_version }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
+    name: Test ${{ matrix.os }}-eAPI-${{ matrix.android_emu_version }}-java-${{ matrix.java_version }}-node-${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     env:
       SUPPLY_TRACK: production   # used by fastlane to determine track to publish to
@@ -188,7 +188,7 @@ jobs:
       max-parallel: 2
       matrix:
         os: [macOS-latest, macos-12]
-        android_emu_version: [27, 29, 31, 32]
+        android_emu_version: [27] #, 29, 31, 32]
         java_version: [11]
         node_version: [16]
         ruby_version: ['3.0']
@@ -199,7 +199,7 @@ jobs:
       run: |
         brew install intel-haxm
         # Install AVD files
-        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-'$MATRIX_E_SDK';default;x86_64'
+        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;default;x86_64'
         echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
         
         # Create emulator

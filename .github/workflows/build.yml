@@ -261,7 +261,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
         name: emulator.png
-          path: emulator.png
+        path: emulator.png
     # steps:
     # - uses: actions/checkout@v2
     #   with:

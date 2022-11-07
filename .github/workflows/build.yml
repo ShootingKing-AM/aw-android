@@ -180,10 +180,12 @@ jobs:
   test:
     name: Test api-${{ matrix.android_emu_version }}, java-${{ matrix.java_version }}, node-${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
+    concurency: false
     env:
       SUPPLY_TRACK: production   # used by fastlane to determine track to publish to
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         os: [macOS-latest]
         android_emu_version: [27, 29, 31, 32]

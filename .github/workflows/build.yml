@@ -439,7 +439,9 @@ jobs:
         SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
         brew install ffmpeg
-        $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-audio -gpu swiftshader_indirect @$MATRIX_AVD -logcat *:v &
+        $ANDROID_HOME/tools/emulator -help-all
+        # -logcat *:v
+        $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-audio -gpu swiftshader_indirect @$MATRIX_AVD &
         ffmpeg -f avfoundation -i 0 -t 240 out$SUFFIX.mov &
     - name: Test App
       id: test

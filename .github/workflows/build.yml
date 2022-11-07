@@ -341,14 +341,14 @@ jobs:
     #     cat android.jks.age | age -d -i android.jks.key -o android.jks
     #     rm android.jks.key
 
-    # - name: Assemble APK
-    #   env:
-    #     JKS_STOREPASS: ${{ secrets.KEY_ANDROID_JKS_STOREPASS }}
-    #     JKS_KEYPASS: ${{ secrets.KEY_ANDROID_JKS_KEYPASS }}
-    #   run: |
-    #     # TODO: Add related stuff in .travis.yml
-    #     # TODO: Allow building even if secrets not set
-    #     make dist/aw-android.apk
+    - name: Cache Assemble APK
+      env:
+        JKS_STOREPASS: ${{ secrets.KEY_ANDROID_JKS_STOREPASS }}
+        JKS_KEYPASS: ${{ secrets.KEY_ANDROID_JKS_KEYPASS }}
+      run: |
+        # TODO: Add related stuff in .travis.yml
+        # TODO: Allow building even if secrets not set
+        make dist/aw-android.apk
 
     # Test
     - name: Test Cache

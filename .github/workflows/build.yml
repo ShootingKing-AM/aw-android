@@ -442,10 +442,14 @@ jobs:
         ffmpeg -f avfoundation -i 0 -t 240 out$SUFFIX.mov &
     - name: Test App
       id: test
+      run: |
+        ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
+
+    - name: Screenshot
+      if: ${{ always() }}
       env:
         SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
-        ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
         sleep 30
         screencapture pscreenshot$SUFFIX.jpg
         $ANDROID_HOME/platform-tools/adb exec-out screencap -p > pemulator$SUFFIX.png

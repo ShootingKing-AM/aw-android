@@ -447,7 +447,7 @@ jobs:
         ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
 
     - name: Screenshot
-      if: ${{ always() }}
+      if: ${{ success() || steps.test.conclusion == 'failure'}}
       env:
         SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
@@ -463,14 +463,14 @@ jobs:
         # mobile\build\outputs\connected_android_test_additional_output\debugAndroidTest\connected\Pixel_XL_API_32(AVD) - 12\ScreenshotTest_saveDeviceScreenBitmap.png
         path: mobile/build/outputs/connected_android_test_additional_output/*
     - name: upload video
-      if: ${{ always() }}
+      if: ${{ success() || steps.test.conclusion == 'failure'}}
       uses: actions/upload-artifact@master
       with:
         name: out
         path: ./*.mov # out.mov
       
     - uses: actions/upload-artifact@v3
-      if: ${{ always() }}
+      if: ${{ success() || steps.test.conclusion == 'failure'}}
       with:
         name: screenshots #.jpg
         #screenshot.jpg

@@ -197,14 +197,14 @@ jobs:
         rust_build: [false]   # if true, will build aw-server-rust, otherwise will fetch artifact from recent CI run
         skip_webui: [true]
         include:
-          - android_avd: [Pixel_API_27_AOSP]
-            android_emu_version: [27]
-          - android_avd: [Pixel_API_29_AOSP]
-            android_emu_version: [29]
-          - android_avd: [Pixel_API_31_AOSP]
-            android_emu_version: [31]
-          - android_avd: [Pixel_API_32_AOSP]
-            android_emu_version: [32]
+          - android_avd: Pixel_API_27_AOSP
+            android_emu_version: 27
+          - android_avd: Pixel_API_29_AOSP
+            android_emu_version: 29
+          - android_avd: Pixel_API_31_AOSP
+            android_emu_version: 31
+          - android_avd: Pixel_API_32_AOSP
+            android_emu_version: 32
     steps: 
     - name: Create Android emulator
       run: |

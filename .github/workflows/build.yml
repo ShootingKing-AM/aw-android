@@ -196,7 +196,7 @@ jobs:
         ruby_version: ['3.0']
         rust_build: [false]   # if true, will build aw-server-rust, otherwise will fetch artifact from recent CI run
         skip_webui: [true]
-        includes:
+        include:
           - android_avd: [Pixel_API_27_AOSP]
             android_emu_version: [27]
           - android_avd: [Pixel_API_29_AOSP]

@@ -250,18 +250,18 @@ jobs:
     - name: upload video
       uses: actions/upload-artifact@master
       with:
-      name: out
-      path: out.mov
+        name: out
+        path: out.mov
       
     - uses: actions/upload-artifact@v3
       with:
-      name: screenshot.jpg
-      path: screenshot.jpg
+        name: screenshot.jpg
+        path: screenshot.jpg
       
     - uses: actions/upload-artifact@v3
       with:
-      name: emulator.png
-      path: emulator.png
+        name: emulator.png
+        path: emulator.png
     # steps:
     # - uses: actions/checkout@v2
     #   with:

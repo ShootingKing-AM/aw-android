@@ -178,7 +178,7 @@ jobs:
         path: dist/aw-android*.apk
 
   test:
-    name: Test ${{ matrix.os }}-eAPI-${{ matrix.android_emu_version }}-java-${{ matrix.java_version }}-node-${{ matrix.node_version }}
+    name: Test ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }} #java-${{ matrix.java_version }}-node-${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     env:
       SUPPLY_TRACK: production   # used by fastlane to determine track to publish to
@@ -188,14 +188,23 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        os: [macos-12] # macOS-latest,
-        android_emu_version: [27, 29, 31, 32]
-        android_avd: [Pixel_API_29_AOSP]
+        os: [macos-12, macOS-latest] # macOS-latest,
+        # android_emu_version: [27, 29, 31, 32]
+        # android_avd: [Pixel_API_29_AOSP]
         java_version: [11]
         node_version: [16]
         ruby_version: ['3.0']
         rust_build: [false]   # if true, will build aw-server-rust, otherwise will fetch artifact from recent CI run
         skip_webui: [true]
+        - includes:
+          - android_avd: [Pixel_API_27_AOSP]
+            android_emu_version: [27]
+          - android_avd: [Pixel_API_29_AOSP]
+            android_emu_version: [29]
+          - android_avd: [Pixel_API_31_AOSP]
+            android_emu_version: [31]
+          - android_avd: [Pixel_API_32_AOSP]
+            android_emu_version: [32]
     steps: 
     - name: Create Android emulator
       run: |
@@ -231,6 +240,8 @@ jobs:
         fi
       
     - name: Start Android emulator
+      env:
+        SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
         echo "Starting emulator and waiting for boot to complete...."
         ls -la $ANDROID_HOME/emulator
@@ -239,8 +250,8 @@ jobs:
         echo "Emulator has finished booting"
         $ANDROID_HOME/platform-tools/adb devices
         sleep 30
-        screencapture screenshot.jpg
-        $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator.png
+        screencapture screenshot$SUFFIX.jpg
+        $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator$SUFFIX.png
   # node -e "const exec = require('child_process'); exec.exec('ffmpeg -f avfoundation -i 0 -t 120 out.mov'); exec.exec('$ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_5_API_31 &');"
       env:
         HOMEBREW_NO_INSTALL_CLEANUP: 1
@@ -424,16 +435,20 @@ jobs:
     #     # Only running specific Instrumentation tests cause others are failing right now. TODO: Fix others
     #     script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
     - name: install recorder and record session
+      env:
+        SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
         brew install ffmpeg
         $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @$MATRIX_AVD &
-        ffmpeg -f avfoundation -i 0 -t 240 out.mov &
+        ffmpeg -f avfoundation -i 0 -t 240 out$SUFFIX.mov &
     - name: Test App
+      env:
+        SUFFIX: ${{ matrix.android_avd }}-eAPI-${{ matrix.android_emu_version }}-${{ matrix.os }}
       run: |
         ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
         sleep 30
-        screencapture pscreenshot.jpg
-        $ANDROID_HOME/platform-tools/adb exec-out screencap -p > pemulator.png
+        screencapture pscreenshot$SUFFIX.jpg
+        $ANDROID_HOME/platform-tools/adb exec-out screencap -p > pemulator$SUFFIX.png
   
     - name: Upload artifact
       if: ${{ success() || steps.test.conclusion == 'failure'}}
@@ -446,11 +461,11 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: out
-        path: out.mov
+        path: ./*.mov # out.mov
       
     - uses: actions/upload-artifact@v3
       with:
-        name: screenshot.jpg
+        name: screenshots #.jpg
         #screenshot.jpg
         path: ./*.jpg
       

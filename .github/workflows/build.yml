@@ -187,7 +187,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        os: [macOS-latest, macos-12]
+        os: [macos-12] # macOS-latest,
         android_emu_version: [27, 29, 31, 32]
         java_version: [11]
         node_version: [16]

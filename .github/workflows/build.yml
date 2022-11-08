@@ -188,7 +188,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        os: [macos-12, macOS-latest] # macOS-latest,
+        os: [macos-12] # macOS-latest,
         android_emu_version: [27] #29, 31, 32]
         # android_avd: [Pixel_API_29_AOSP]
         java_version: [11]
@@ -478,7 +478,9 @@ jobs:
       with:
         name: screenshots #.jpg
         #screenshot.jpg
-        path: ./*.jpg
+        path: |
+          ./*.jpg
+          ./*.png
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3
       if: ${{ success() || steps.test.conclusion == 'failure'}}

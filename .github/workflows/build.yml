@@ -455,7 +455,7 @@ jobs:
     - name: Test App
       id: test
       run: |
-        adb logcat -color &
+        adb logcat -v color &
         ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
         # adb logcat -d
         adb logcat > mobile/build/logcat.log

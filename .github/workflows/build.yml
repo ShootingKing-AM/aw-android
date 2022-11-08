@@ -457,13 +457,14 @@ jobs:
         screencapture pscreenshot$SUFFIX.jpg
         $ANDROID_HOME/platform-tools/adb exec-out screencap -p > pemulator$SUFFIX.png
   
-    - name: Upload artifact
+    - name: Upload Build artifact
       if: ${{ success() || steps.test.conclusion == 'failure'}}
       uses: actions/upload-artifact@v3
       with:
-        name: screenshots
+        name: Build outputs
         # mobile\build\outputs\connected_android_test_additional_output\debugAndroidTest\connected\Pixel_XL_API_32(AVD) - 12\ScreenshotTest_saveDeviceScreenBitmap.png
-        path: mobile/build/outputs/connected_android_test_additional_output/*
+        path: aw-android/aw-android/mobile/build/*
+        # mobile/build/outputs/connected_android_test_additional_output/*
     - name: upload video
       if: ${{ success() || steps.test.conclusion == 'failure'}}
       uses: actions/upload-artifact@master

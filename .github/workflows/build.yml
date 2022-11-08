@@ -189,7 +189,7 @@ jobs:
       max-parallel: 1
       matrix:
         os: [macos-12, macOS-latest] # macOS-latest,
-        android_emu_version: [27, 29, 31, 32]
+        android_emu_version: [27] #29, 31, 32]
         # android_avd: [Pixel_API_29_AOSP]
         java_version: [11]
         node_version: [16]
@@ -199,12 +199,12 @@ jobs:
         include:
           - android_avd: Pixel_API_27_AOSP
             android_emu_version: 27
-          - android_avd: Pixel_API_29_AOSP
-            android_emu_version: 29
-          - android_avd: Pixel_API_31_AOSP
-            android_emu_version: 31
-          - android_avd: Pixel_API_32_AOSP
-            android_emu_version: 32
+          # - android_avd: Pixel_API_29_AOSP
+          #   android_emu_version: 29
+          # - android_avd: Pixel_API_31_AOSP
+          #   android_emu_version: 31
+          # - android_avd: Pixel_API_32_AOSP
+          #   android_emu_version: 32
     steps: 
     - name: Create Android emulator
       run: |

@@ -483,7 +483,7 @@ jobs:
       uses: mikepenz/action-junit-report@v3
       if: ${{ success() || steps.test.conclusion == 'failure'}}
       with:
-        report_paths: ['**/build/test-results/test/TEST-*.xml', '**/build/reports/*Tests/**/*.html']
+        report_paths: '**/build/reports/*Tests/**/*.html' # '**/build/test-results/test/TEST-*.xml'
       
     # - uses: actions/upload-artifact@v3
     #   with:

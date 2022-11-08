@@ -476,7 +476,9 @@ jobs:
       with:
         name: Build outputs
         # mobile\build\outputs\connected_android_test_additional_output\debugAndroidTest\connected\Pixel_XL_API_32(AVD) - 12\ScreenshotTest_saveDeviceScreenBitmap.png
-        path: mobile/build/*
+        path: | 
+          mobile/build/reports/*
+          mobile/build/logcat.log
 
     - name: Upload video
       if: ${{ success() || steps.test.conclusion == 'failure'}}

@@ -455,6 +455,7 @@ jobs:
     - name: Test App
       id: test
       run: |
+        adb logcat &
         ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
 
     - name: Screenshot

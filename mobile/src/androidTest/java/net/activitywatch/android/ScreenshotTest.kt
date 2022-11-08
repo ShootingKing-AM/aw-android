@@ -41,7 +41,7 @@ class ScreenshotTest {
         scenario = ActivityScenario.launch(intent)
 
         // TODO: Not a good method to sleep, need to properly hook on page load
-        Thread.sleep(2000)
+        Thread.sleep(5000)
         takeScreenshot()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }

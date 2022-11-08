@@ -206,6 +206,9 @@ jobs:
           # - android_avd: Pixel_API_32_AOSP
           #   android_emu_version: 32
     steps: 
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
     - name: Create Android emulator
       run: |
         brew install intel-haxm
@@ -256,9 +259,6 @@ jobs:
         $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator$SUFFIX.png
   # node -e "const exec = require('child_process'); exec.exec('ffmpeg -f avfoundation -i 0 -t 120 out.mov'); exec.exec('$ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_5_API_31 &');"
     # steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
 
     # Build in release mode if: (longer build times)
     #  - on a tag (release)
@@ -442,7 +442,7 @@ jobs:
         $ANDROID_HOME/tools/emulator -help-all
         # -logcat *:v
         $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-audio -gpu swiftshader_indirect -logcat *:v @$MATRIX_AVD &
-        ffmpeg -f avfoundation -i 0 -t 240 out$SUFFIX.mov &
+        ffmpeg -f avfoundation -i 0 -t 150 out$SUFFIX.mov &
     - name: Test App
       id: test
       run: |
@@ -456,6 +456,7 @@ jobs:
         sleep 30
         screencapture pscreenshot$SUFFIX.jpg
         $ANDROID_HOME/platform-tools/adb exec-out screencap -p > pemulator$SUFFIX.png
+        ls -alh
   
     - name: Upload Build artifact
       if: ${{ success() || steps.test.conclusion == 'failure'}}

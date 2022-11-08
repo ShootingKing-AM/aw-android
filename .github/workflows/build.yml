@@ -456,7 +456,10 @@ jobs:
       id: test
       run: |
         adb logcat &
+        adb logcat > mobile/build/logcat.log
         ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.class=net.activitywatch.android.ScreenshotTest --stacktrace
+        adb logcat > mobile/build/logcat.log
+        adb logcat -d
 
     - name: Screenshot
       if: ${{ success() || steps.test.conclusion == 'failure'}}
